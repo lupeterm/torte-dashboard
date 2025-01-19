@@ -1,0 +1,19 @@
+{
+  "name": "spiffy-mercury",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "startserver": "astro build &&node index.mjs"
+  },
+  "dependencies": {
+    "@astrojs/node": "^9.0.1",
+    "astro": "^5.1.7",
+    "d3": "^7.9.0",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9"
+  }
+}
