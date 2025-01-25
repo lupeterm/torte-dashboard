@@ -43,5 +43,3 @@ To start the Flask server, simply run in a terminal:
 // make sure you have flask installed
 python server.py  // or flask --app server run
 ```
-
-
