@@ -4,19 +4,20 @@
   import Input from "./Input.svelte";
   import LinkButton from "./LinkButton.svelte";
   let menuOpen = false;
-  let inputValue = "";
 
-  const menuItems = ["selection"];
-  let filteredItems = [];
+  let plotName = "";
 
-  const handleInput = () => {
-    return (filteredItems = menuItems.filter((item) =>
-      item.toLowerCase().match(inputValue.toLowerCase()),
-    ));
-  };
+  const menuItems = [
+    "Linux Sloc",
+    "Jaccard Features",
+    "Configuration Similarity",
+    "Total Features",
+  ];
 
-  const getPlot = () => {
-    fetch("/graph")
+  const getPlot = (config) => {
+    console.log(config);
+    console.log(JSON.stringify({ graph: config }));
+    fetch(`/graph?graph=${config.replace(" ", "-")}`)
       .then((response) => {
         // When the page is loaded convert it to text
         return response.text();
@@ -28,6 +29,7 @@
         iframe.contentWindow.document.open();
         iframe.contentWindow.document.write(data);
         iframe.contentWindow.document.close();
+        plotName = config;
       })
       .catch((error) => {
         console.error("Failed to fetch page: ", error);
@@ -40,30 +42,26 @@
   <Button on:click={() => (menuOpen = !menuOpen)} {menuOpen} />
 
   <div id="myDropdown" class:show={menuOpen} class="dropdown-content">
-    <LinkButton
-      text="Mock Selection"
-      on:click={() => {
-        getPlot();
-        menuOpen = !menuOpen
-      }}
-    ></LinkButton>
-    <Input bind:inputValue on:input={handleInput} />
     <!-- MENU -->
-    {#if filteredItems.length > 0}
-      {#each filteredItems as item}
-        <Link link={item} />
-      {/each}
-    {:else}
-      {#each menuItems as item}
-        <Link link={item} />
-      {/each}
-    {/if}
+    {#each menuItems as item}
+      <LinkButton
+        text={item}
+        on:click={() => {
+          getPlot(item);
+          menuOpen = !menuOpen;
+        }}
+      ></LinkButton>
+    {/each}
   </div>
 </section>
 
 <section>
-  <h2>Plot:</h2>
-  <iframe id="plot" style="height:80vh;width:90vh; border:none"></iframe>
+  <h2 hidden={plotName == ""}>Plot: {plotName}</h2>
+  <iframe
+    hidden={plotName == ""}
+    id="plot"
+    style="height:80vh;width:90vh; border:none"
+  ></iframe>
 </section>
 
 <style>
