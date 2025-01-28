@@ -2,7 +2,7 @@ from flask import Flask, send_from_directory, request
 import random
 
 app = Flask(__name__)
-FIGURE_FOLDER = "/home/peter/clones/torte/experiments/figures"
+FIGURE_FOLDER = "frontend/public/figures"
 TMP_MAPPING = {
     "Linux-Sloc": "sloc.html",
     "Jaccard-Features": "features-jaccard.html",
