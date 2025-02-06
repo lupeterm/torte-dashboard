@@ -1,5 +1,6 @@
 from flask import Flask, send_from_directory, request
 import random
+import json
 
 app = Flask(__name__)
 FIGURE_FOLDER = "frontend/public/figures"
@@ -35,6 +36,17 @@ def graph():
 @app.route('/architectures')
 def architectures():
     return send_from_directory('frontend/public', 'architectures.json')
+
+
+@app.route('/commits')
+def commits():
+    # print(request.args)
+    # project = request.args["project"]
+    # arch = ""
+    # if project == "linux":
+    #     arch = request.args["arch"]
+    return send_from_directory('frontend/public', 'commits.json')
+
 
 if __name__ == "__main__":
     app.run(debug=True)

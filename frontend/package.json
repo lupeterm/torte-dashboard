@@ -10,12 +10,14 @@
     "@svelteuidev/core": "^0.15.7",
     "npm-run-all": "^4.1.5",
     "rollup": "^4.34.4",
+    "rollup-plugin-circular-dependencies": "^1.1.2",
     "rollup-plugin-css-only": "^4.5.2",
     "rollup-plugin-livereload": "^2.0.5",
     "rollup-plugin-svelte": "^7.2.2",
     "svelte": "^3.59.2"
   },
   "dependencies": {
+    "date-picker-svelte": "^2.15.1",
     "sirv-cli": "^0.4.4"
   },
   "scripts": {

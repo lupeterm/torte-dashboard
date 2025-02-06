@@ -11,7 +11,7 @@
 </label>
 
 
-<!-- <style>
+<style>
     .switch {
         position: relative;
         display: inline-block;
@@ -56,4 +56,4 @@
     input:checked + .slider:before {
         transform: translateX(26px);
     }
-</style> -->
+</style>

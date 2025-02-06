@@ -1,6 +1,6 @@
 <script>
   import { Group, Loader, Center, NativeSelect } from "@svelteuidev/core";
-
+	import { DateInput } from 'date-picker-svelte'
   import { onMount } from "svelte";
   import DateRangeSelection from "./DateRangeSelection.svelte";
   import CommitRangeSelection from "./CommitRangeSelection.svelte";
@@ -12,13 +12,14 @@
   let error = null;
   let selectDateRange = true;
   let config = {
-    startDate: null,
-    endDate: null,
+    startDate: new Date(),
+    endDate: new Date(),
     startCommit: null,
     endCommit: null,
     selectedProject: null,
     selectedArch: null,
   };
+  let commits = [];
   onMount(async () => {
     try {
       const response = await fetch("/architectures");
@@ -57,6 +58,27 @@
         console.error("Failed to fetch page: ", error);
       });
   };
+  const getCommits = (config) => {
+    console.log(config);
+    console.log(JSON.stringify({ graph: config }));
+    let url = `/commmits?project=${config.selectedProject}`
+    if (config.selectedProject == "linux"){
+      url += `&arch=${config.selectedArch}`
+    }
+    fetch("/commits")
+      .then((response) => {
+        // When the page is loaded convert it to text
+        console.log(response);
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        commits = data["commits"];
+      })
+      .catch((error) => {
+        console.error("Failed to fetch page: ", error);
+      });
+  };
 </script>
 
 <h1>Hi!</h1>
@@ -89,11 +111,15 @@
       <Toggler
         title={selectDateRange ? "Select Commits" : "Select Dates"}
         callback={(checkValue) => {
+          if (checkValue && config.selectedProject) {
+            getCommits(config);
+          }
           selectDateRange = checkValue;
         }}
       ></Toggler>
       {#if selectDateRange}
-        <DateRangeSelection></DateRangeSelection>
+        <input type="date" bind:value={config.startDate}/>
+        <input type="date" bind:value={config.endDate} />
       {:else}
         <CommitRangeSelection></CommitRangeSelection>
       {/if}
