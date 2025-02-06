@@ -5,7 +5,7 @@ Semi-Static web interface for visualization of pre-executed [torte](https://gith
 
 ### First Tech Stack
 
-Our first setup was made up of tow things:
+Our first setup was made up of two things:
 
 1. Astro frontend (used as middleware)
 2. expressJS server
