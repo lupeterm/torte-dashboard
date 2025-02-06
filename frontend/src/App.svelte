@@ -1,18 +1,40 @@
 <script>
-  import Link from "./Link.svelte";
-  import Button from "./Button.svelte";
-  import Input from "./Input.svelte";
-  import LinkButton from "./LinkButton.svelte";
-  let menuOpen = false;
+  import { Group, Loader, Center, NativeSelect } from "@svelteuidev/core";
 
+  import { onMount } from "svelte";
+  import DateRangeSelection from "./DateRangeSelection.svelte";
+  import CommitRangeSelection from "./CommitRangeSelection.svelte";
+  import Toggler from "./Toggler.svelte";
   let plotName = "";
-
-  const menuItems = [
-    "Linux Sloc",
-    "Jaccard Features",
-    "Configuration Similarity",
-    "Total Features",
-  ];
+  let architectures = [];
+  let projects = [];
+  let loading = true;
+  let error = null;
+  let selectDateRange = true;
+  let config = {
+    startDate: null,
+    endDate: null,
+    startCommit: null,
+    endCommit: null,
+    selectedProject: null,
+    selectedArch: null,
+  };
+  onMount(async () => {
+    try {
+      const response = await fetch("/architectures");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      architectures = data["architectures"];
+      projects = data["projects"];
+      loading = false;
+    } catch (err) {
+      console.log(err);
+      error = err;
+      loading = false;
+    }
+  });
 
   const getPlot = (config) => {
     console.log(config);
@@ -38,49 +60,58 @@
 </script>
 
 <h1>Hi!</h1>
-<section class="dropdown">
-  <Button on:click={() => (menuOpen = !menuOpen)} {menuOpen} />
-
-  <div id="myDropdown" class:show={menuOpen} class="dropdown-content">
-    <!-- MENU -->
-    {#each menuItems as item}
-      <LinkButton
-        text={item}
-        on:click={() => {
-          getPlot(item);
-          menuOpen = !menuOpen;
+<Center>
+  {#if loading}
+    <p>Loading...</p>
+    <Loader variant="dots" />
+  {:else if error}
+    <p>Error: {error.message}</p>
+  {:else}
+    <Group position="center" spacing="xl">
+      <NativeSelect
+        data={projects}
+        placeholder="Project"
+        variant="filled"
+        radius="md"
+        size="md"
+        bind:value={config.selectedProject}
+      ></NativeSelect>
+      {#if config.selectedProject == "linux"}
+        <NativeSelect
+          data={architectures}
+          placeholder={"Architecture"}
+          variant="filled"
+          radius="md"
+          size="md"
+          bind:value={config.selectedArch}
+        ></NativeSelect>
+      {/if}
+      <Toggler
+        title={selectDateRange ? "Select Commits" : "Select Dates"}
+        callback={(checkValue) => {
+          selectDateRange = checkValue;
         }}
-      ></LinkButton>
-    {/each}
-  </div>
-</section>
+      ></Toggler>
+      {#if selectDateRange}
+        <DateRangeSelection></DateRangeSelection>
+      {:else}
+        <CommitRangeSelection></CommitRangeSelection>
+      {/if}
+      <button
+        on:click={() => {
+          alert(JSON.stringify(config));
+        }}>Go!</button
+      >
+    </Group>
 
-<section>
-  <h2 hidden={plotName == ""}>Plot: {plotName}</h2>
-  <iframe
-    hidden={plotName == ""}
-    id="plot"
-    style="height:80vh;width:90vh; border:none"
-  ></iframe>
-</section>
-
-<style>
-  .dropdown {
-    position: relative;
-    display: inline-block;
-  }
-
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f6f6f6;
-    min-width: 230px;
-    border: 1px solid #ddd;
-    z-index: 1;
-  }
-
-  /* Show the dropdown menu */
-  .show {
-    display: block;
-  }
-</style>
+    <section>
+      <h2 hidden={plotName == ""}>Plot: {plotName}</h2>
+      <iframe
+        title="Plot"
+        hidden={plotName == ""}
+        id="plot"
+        style="height:80vh;width:90vh; border:none"
+      ></iframe>
+    </section>
+  {/if}
+</Center>

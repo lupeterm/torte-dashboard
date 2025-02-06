@@ -32,5 +32,9 @@ def graph():
     return send_from_directory(FIGURE_FOLDER, file)
     # return 'frontend/public/plotly_graph.html'
 
+@app.route('/architectures')
+def architectures():
+    return send_from_directory('frontend/public', 'architectures.json')
+
 if __name__ == "__main__":
     app.run(debug=True)

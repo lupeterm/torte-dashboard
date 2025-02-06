@@ -2,9 +2,9 @@
     export let text;
 </script>
 
-<button on:click class="dropbtn"
-    >{text}</button
->
+<li>
+    <button on:click class="dropbtn">{text}</button>
+</li>
 
 <style>
     /* Dropdown Button */
@@ -21,5 +21,8 @@
     .dropbtn:hover,
     .dropbtn:focus {
         background-color: #3e8e41;
+    }
+    button {
+        width: 100%;
     }
 </style>
