@@ -6,7 +6,7 @@
 
 <p>{title}</p>
 <label class="switch">
-    <input type="checkbox" bind:checked={checked} onclick={callback(checked)} />
+    <input type="checkbox" bind:checked={checked} onclick={callback(checked)}/>
     <span class="slider"></span>
 </label>
 
