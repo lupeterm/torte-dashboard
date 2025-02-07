@@ -24,7 +24,7 @@ export default {
 			// 	css.write('public/bundle.css');
 			// }
 		}),
-		css({ output: "bundle.[hash].css" }),
+		css({ output: 'bundle.css' }),
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
 		// some cases you'll need additional configuration —
