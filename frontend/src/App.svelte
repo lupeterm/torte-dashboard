@@ -1,14 +1,18 @@
 <script>
-  import { colorScheme, SvelteUIProvider, Button } from "@svelteuidev/core";
-  import Logo from "./Logo.svelte";
-  import Hamburger from "./Hamburger.svelte";
-  import Menu from "./Menu.svelte";
+  import {
+    colorScheme,
+    SvelteUIProvider,
+    Button,
+    ActionIcon,
+    Group,
+  } from "@svelteuidev/core";
   import Main from "./Main.svelte";
   import { onMount } from "svelte";
   let projects = [];
-
+  let plotOptions = [];
   let open = false;
-  function openNav() {
+  let selectedProject = null;
+  function toggleSidebar() {
     if (document.getElementById("mySidenav") == null) {
       open = false;
       return;
@@ -23,13 +27,14 @@
   }
   onMount(async () => {
     try {
-      colorScheme.update((v) => "dark");
-      const response = await fetch("/architectures");
+      colorScheme.update(() => "dark");
+      const response = await fetch("/init");
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
       projects = data["projects"];
+      plotOptions = data["plots"];
     } catch (err) {
       console.log(err);
       error = err;
@@ -39,23 +44,32 @@
 </script>
 
 <SvelteUIProvider withGlobalStyles themeObserver={colorScheme}>
-  <nav class="flex">
-    <Hamburger onClickFunc={openNav} />
-    <Logo />
-  </nav>
+  <Group>
+    <ActionIcon style="margin:0;" on:click={toggleSidebar}>
+      <img src="svgs/hamburger.svg" alt="My Happy SVG" />
+    </ActionIcon>
+    <h1>Torte Dashboard</h1>
 
+  </Group>
   <div id="mySidenav" class="sidenav">
+    <ActionIcon on:click={toggleSidebar}>
+      <img src="svgs/close.svg" alt="My Happy SVG" />
+    </ActionIcon>
     {#each projects as item}
       <Button
         style="width: 90%;margin:auto;margin-bottom: 5px"
         variant="default"
         ripple
+        on:click={() => {
+          selectedProject = item;
+          toggleSidebar()}}
       >
         {item}
       </Button>
     {/each}
   </div>
-  <Main />
+  <Main plotOptions={plotOptions} selectedProject={selectedProject}/>
+  
 </SvelteUIProvider>
 
 <style>
@@ -65,40 +79,16 @@
     position: fixed;
     z-index: 1;
     top: 0;
-    right: 0;
+    left: 0;
     background-color: #111;
     overflow-x: hidden;
     transition: 0.5s;
-    padding-top: 60px;
+    padding-top: 10px;
   }
 
-  .sidenav a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
-  }
-
-  .sidenav a:hover {
-    color: #f1f1f1;
-  }
-
-  .sidenav .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-  }
-
-  @media screen and (max-height: 450px) {
+  @media screen and (max-height: 300px) {
     .sidenav {
       padding-top: 15px;
-    }
-    .sidenav a {
-      font-size: 18px;
     }
   }
 </style>

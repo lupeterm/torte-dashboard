@@ -1,6 +1,7 @@
 from flask import Flask, send_from_directory, request
 import random
 import json
+import os
 
 app = Flask(__name__)
 FIGURE_FOLDER = "frontend/public/figures"
@@ -25,28 +26,16 @@ def home(path):
 def hello():
     return str(random.randint(0, 100))
 
-@app.route('/graph')
+@app.route('/graph', methods=["POST"])
 def graph():
-    print(request.args)
-    req = request.args["graph"]
-    file = TMP_MAPPING[req]
-    return send_from_directory(FIGURE_FOLDER, file)
-    # return 'frontend/public/plotly_graph.html'
+    req = request.json
+    file_name = f"{req["plot"]}-{req["project"].replace("/", "-")}.html"
+    print(file_name)
+    return send_from_directory(os.path.join(FIGURE_FOLDER, req["plot"]), file_name)
 
-@app.route('/architectures')
-def architectures():
-    return send_from_directory('frontend/public', 'architectures.json')
-
-
-@app.route('/commits')
-def commits():
-    # print(request.args)
-    # project = request.args["project"]
-    # arch = ""
-    # if project == "linux":
-    #     arch = request.args["arch"]
-    return send_from_directory('frontend/public', 'commits.json')
-
+@app.route('/init')
+def init():
+    return send_from_directory('frontend/public', 'init.json')
 
 if __name__ == "__main__":
     app.run(debug=True)

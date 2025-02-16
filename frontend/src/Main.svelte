@@ -1,42 +1,34 @@
 <script>
-    import { Group, NativeSelect, Button } from "@svelteuidev/core";
-    let config = {
-        selectedProject: null,
-        selectedArch: null,
-    };
+    import { Group, NativeSelect, Button, Stack, Center } from "@svelteuidev/core";
 
-    let plotName = "";
-    let plotOptions = [
-        "sloc",
-        "features",
-        "configuration",
-        "share",
-        "feature",
-        "total",
-        "features",
-        "model",
-        "model",
-        "architectures",
-        "model",
-        "features",
-    ];
-
-    const getPlot = (config) => {
-        console.log(config);
-        console.log(JSON.stringify({ graph: config }));
-        fetch(`/graph?graph=${config.replace(" ", "-")}`)
+    let selectedPlot = null;
+    export let plotOptions;
+    export let selectedProject;
+    const getPlot = () => {
+        if (!selectedProject) {
+            return;
+        }
+        const req = JSON.stringify({
+            project: selectedProject,
+            plot: selectedPlot,
+        });
+        fetch("/graph", {
+            method: "POST",
+            headers: {
+                Accept: "application/json, text/plain, */*",
+                "Content-Type": "application/json",
+            },
+            body: req,
+        })
             .then((response) => {
                 // When the page is loaded convert it to text
                 return response.text();
             })
             .then((data) => {
-                console.log(data);
-
                 var iframe = document.getElementById("plot");
                 iframe.contentWindow.document.open();
                 iframe.contentWindow.document.write(data);
                 iframe.contentWindow.document.close();
-                plotName = config;
             })
             .catch((error) => {
                 console.error("Failed to fetch page: ", error);
@@ -51,28 +43,34 @@
         variant="filled"
         radius="md"
         size="md"
-        bind:value={config.endCommit}
+        bind:value={selectedPlot}
     ></NativeSelect>
     <Button on:click={() => getPlot("Linux-Sloc")} ripple>
         Go!
         <img src="svgs/rocket.svg" alt="My Happy SVG" />
     </Button>
 </Group>
-<h2 hidden={plotName == ""}>Plot: {plotName}</h2>
-<div class="plotContainer">
+<Stack override={{ height: 300 }} align="center">
+    <h2 hidden={selectedPlot == null}>Plot: {selectedPlot}</h2>
+    <div class="plotContainer">
+    </div>
+</Stack>
+<Center>
     <iframe
+    align="center"
         title="Plot"
-        hidden={plotName == ""}
+        hidden={selectedPlot == ""}
         id="plot"
-        style="height:50%;width:80%;border:none;display:block"
+        style="height:230px;width:760px;border:none;display:block"
     ></iframe>
-</div>
-
+</Center>
 <style>
     .plotContainer {
         display: flex;
         justify-content: center;
-        width: 100%;
-        height: 100%;
+        align-items: center;
+        height: 100vh; /* Full viewport height */
+        width: 24vw;
+        margin: 0;
     }
 </style>
