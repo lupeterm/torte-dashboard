@@ -1,6 +1,5 @@
 from flask import Flask, send_from_directory, request
 import random
-import json
 import os
 
 app = Flask(__name__)
@@ -29,9 +28,10 @@ def hello():
 @app.route('/graph', methods=["POST"])
 def graph():
     req = request.json
-    file_name = f"{req["plot"]}-{req["project"].replace("/", "-")}.html"
+    file_name = f"{req['plot']}-{req['project'].replace('/', '-')}.html"
     print(file_name)
-    return send_from_directory(os.path.join(FIGURE_FOLDER, req["plot"]), file_name)
+    # return send_from_directory(os.path.join(FIGURE_FOLDER, req["plot"]), file_name)
+    return send_from_directory(FIGURE_FOLDER, "sloc.html")
 
 @app.route('/init')
 def init():

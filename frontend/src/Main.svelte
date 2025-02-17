@@ -1,5 +1,11 @@
 <script>
-    import { Group, NativeSelect, Button, Stack, Center } from "@svelteuidev/core";
+    import {
+        Group,
+        NativeSelect,
+        Button,
+        Stack,
+        Center,
+    } from "@svelteuidev/core";
 
     let selectedPlot = null;
     export let plotOptions;
@@ -52,25 +58,16 @@
 </Group>
 <Stack override={{ height: 300 }} align="center">
     <h2 hidden={selectedPlot == null}>Plot: {selectedPlot}</h2>
-    <div class="plotContainer">
-    </div>
 </Stack>
 <Center>
     <iframe
-    align="center"
+        align="center"
         title="Plot"
         hidden={selectedPlot == ""}
         id="plot"
-        style="height:230px;width:760px;border:none;display:block"
+        style="height:800px;width:1510px;border:none;display:block"
     ></iframe>
 </Center>
+
 <style>
-    .plotContainer {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh; /* Full viewport height */
-        width: 24vw;
-        margin: 0;
-    }
 </style>
